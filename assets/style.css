@@ -1,0 +1,23 @@
+/* Initial Custom styles for the Machine Issue Tracker application */
+
+body {
+    background-color: #f5f7fa;
+}
+
+.page-container {
+    max-width: 1400px;
+}
+
+.summary-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.issue-table {
+    vertical-align: middle;
+}
+
+.issue-description {
+    max-width: 320px;
+    white-space: normal;
+}
