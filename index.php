@@ -10,6 +10,9 @@ $issueCreated = isset($_GET['created'])
 $issueUpdated = isset($_GET['updated'])
     && $_GET['updated'] === '1';
 
+$issueDeleted = isset($_GET['deleted'])
+    && $_GET['deleted'] === '1';
+
 $statement = $pdo->query(
     'SELECT
         issues.id,
@@ -59,6 +62,12 @@ $issues = $statement->fetchAll();
     <p>
         <strong>Issue status updated successfully.</strong>
     </p>
+    <?php endif; ?>
+
+    <?php if ($issueDeleted): ?>
+        <p>
+            <strong>Issue deleted successfully.</strong>
+        </p>
     <?php endif; ?>
 
     <?php if (count($issues) === 0): ?>
@@ -135,7 +144,16 @@ $issues = $statement->fetchAll();
                                 Update Status
                             </a>
                         </td>
-                        
+
+                        <td>
+                            <a
+                                href="delete-issue.php?id=<?php
+                                echo urlencode($issue['id']);
+                                ?>"
+                            >
+                                Delete
+                            </a>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
