@@ -7,6 +7,12 @@ $projectName = 'Machine Issue Tracker';
 $issueCreated = isset($_GET['created'])
     && $_GET['created'] === '1';
 
+$issueUpdated = isset($_GET['updated'])
+    && $_GET['updated'] === '1';
+
+$issueDeleted = isset($_GET['deleted'])
+    && $_GET['deleted'] === '1';
+
 $statement = $pdo->query(
     'SELECT
         issues.id,
@@ -52,6 +58,18 @@ $issues = $statement->fetchAll();
         </p>
     <?php endif; ?>
 
+    <?php if ($issueUpdated): ?>
+    <p>
+        <strong>Issue status updated successfully.</strong>
+    </p>
+    <?php endif; ?>
+
+    <?php if ($issueDeleted): ?>
+        <p>
+            <strong>Issue deleted successfully.</strong>
+        </p>
+    <?php endif; ?>
+
     <?php if (count($issues) === 0): ?>
         <p>No machine issues have been reported.</p>
     <?php else: ?>
@@ -64,6 +82,7 @@ $issues = $statement->fetchAll();
                     <th>Description</th>
                     <th>Status</th>
                     <th>Reported At</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -115,6 +134,26 @@ $issues = $statement->fetchAll();
                             );
                             ?>
                         </td>
+
+                        <td>
+                            <a
+                                href="edit-issue.php?id=<?php
+                                echo urlencode($issue['id']);
+                                ?>"
+                            >
+                                Update Status
+                            </a>
+                        </td>
+
+                        <td>
+                            <a
+                                href="delete-issue.php?id=<?php
+                                echo urlencode($issue['id']);
+                                ?>"
+                            >
+                                Delete
+                            </a>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
