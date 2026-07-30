@@ -4,13 +4,25 @@ require_once __DIR__ . '/config/database.php';
 
 $projectName = 'Machine Issue Tracker';
 
+$issueCreated = isset($_GET['created'])
+    && $_GET['created'] === '1';
+
 $statement = $pdo->query(
-    'SELECT id, machine_code, machine_name, location
-     FROM machines
-     ORDER BY machine_code ASC'
+    'SELECT
+        issues.id,
+        issues.issue_title,
+        issues.issue_description,
+        issues.status,
+        issues.reported_at,
+        machines.machine_code,
+        machines.machine_name
+     FROM issues
+     INNER JOIN machines
+        ON issues.machine_id = machines.id
+     ORDER BY issues.reported_at DESC'
 );
 
-$machines = $statement->fetchAll();
+$issues = $statement->fetchAll();
 
 ?>
 
@@ -30,38 +42,78 @@ $machines = $statement->fetchAll();
 <body>
     <h1><?php echo htmlspecialchars($projectName); ?></h1>
 
-    <p>Registered machines in the system:</p>
+    <p>
+        <a href="add-issue.php">Report New Issue</a>
+    </p>
 
-    <?php if (count($machines) === 0): ?>
-        <p>No machines have been registered.</p>
+    <?php if ($issueCreated): ?>
+        <p>
+            <strong>Issue reported successfully.</strong>
+        </p>
+    <?php endif; ?>
+
+    <?php if (count($issues) === 0): ?>
+        <p>No machine issues have been reported.</p>
     <?php else: ?>
         <table border="1" cellpadding="10">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Machine Code</th>
-                    <th>Machine Name</th>
-                    <th>Location</th>
+                    <th>Machine</th>
+                    <th>Issue</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Reported At</th>
                 </tr>
             </thead>
 
             <tbody>
-                <?php foreach ($machines as $machine): ?>
+                <?php foreach ($issues as $issue): ?>
                     <tr>
                         <td>
-                            <?php echo htmlspecialchars($machine['id']); ?>
+                            <?php echo htmlspecialchars($issue['id']); ?>
                         </td>
 
                         <td>
-                            <?php echo htmlspecialchars($machine['machine_code']); ?>
+                            <?php
+                            echo htmlspecialchars(
+                                $issue['machine_code']
+                                . ' — '
+                                . $issue['machine_name']
+                            );
+                            ?>
                         </td>
 
                         <td>
-                            <?php echo htmlspecialchars($machine['machine_name']); ?>
+                            <?php
+                            echo htmlspecialchars(
+                                $issue['issue_title']
+                            );
+                            ?>
                         </td>
 
                         <td>
-                            <?php echo htmlspecialchars($machine['location']); ?>
+                            <?php
+                            echo htmlspecialchars(
+                                $issue['issue_description']
+                            );
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo htmlspecialchars(
+                                $issue['status']
+                            );
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo htmlspecialchars(
+                                $issue['reported_at']
+                            );
+                            ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
